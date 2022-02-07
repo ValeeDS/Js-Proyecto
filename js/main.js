@@ -9,8 +9,8 @@ class Proyect {
     constructor(name, description, start_date, due_date, tasks, status){
         this.name = name;
         this.description = description;
-        this.start_date = new Date(start_date);
-        this.due_date = new Date(due_date);
+        this.start_date = new Date(start_date[0],start_date[1],start_date[2]);
+        this.due_date = new Date(due_date[0],due_date[1],due_date[2]);
         this.tasks = tasks; // Type Array
         this.status = false;
     }
@@ -69,8 +69,16 @@ function Add_proyects(){
         else {
             let name = prompt("Ingrese el nombre del Proyecto");
             let description = prompt("Ingrese una breve descripción del proyecto");
-            let start_date = prompt('Ingrese la fecha de inicio con el siguiente formato: "Mes Fecha, Año"');
-            let due_date = prompt('Ingrese la fecha límite con el siguiente formato: "Mes Fecha, Año"');
+            let start_date = [
+                parseInt(prompt("Ingrese el año de la fecha de inicio")),
+                parseInt(prompt("Ingrese el mes de la fecha de inicio (número)"))-1,
+                parseInt(prompt("Ingrese el día de la fecha de inicio")),
+                ];
+            let due_date = [
+                parseInt(prompt("Ingrese el año de la fecha límite")),
+                parseInt(prompt("Ingrese el mes de la fecha límite (número)"))-1,
+                parseInt(prompt("Ingrese el día de la fecha límite")),
+                ];
 
             proyects.push(newProy = create_proyect(name, description, start_date, due_date));
         }
@@ -81,5 +89,19 @@ function Add_proyects(){
     return proyects;
 }
 
+function filtrar_completado(array,stat){
+    let result = [];
+
+    result = array.filter((elem) => elem.status == stat);
+
+    return result
+}
+
 const proyectos = Add_proyects();
 console.log(proyectos);
+
+const proy_completos = filtrar_completado(proyectos,true);
+console.log(proy_completos);
+
+const proy_pendientes = filtrar_completado(proyectos,false);
+console.log(proy_pendientes);
