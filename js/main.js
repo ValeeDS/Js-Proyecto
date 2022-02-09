@@ -81,8 +81,7 @@ function show_frontend(proyecto){
     proy_div.innerHTML = `<h3>Proyecto: ${proyecto.name}</h3>
                          <p>${proyecto.description}</p>
                          <p>Desde ${proyecto.start_date} hasta ${proyecto.due_date}</p>
-                         <ul id="${proyecto.name}_tasks">Tareas:</ul>
-                         <br>`;
+                         <ul id="${proyecto.name}_tasks">Tareas:</ul>`;
 
     document.body.appendChild(proy_div);
 
@@ -93,9 +92,6 @@ function show_frontend(proyecto){
         li.innerHTML = task.task;
         tasks_ul.appendChild(li);
     }
-
-    /*proy_div.innerHTML = `<\ul>`;
-    document.body.appendChild(proy_div);*/
 }
 
 function filtrar_completado(array,stat){
