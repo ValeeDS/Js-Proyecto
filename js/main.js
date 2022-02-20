@@ -68,6 +68,25 @@ function addtaskClick() {
     document.getElementById('proyectForm').appendChild(proy_Submit);
 }
 
+function addtaskClick_created() {
+    let task_btnAdd = document.getElementById('btnAddTask_created');
+    task_btnAdd.remove();
+
+    let proy_input = document.createElement("div");
+    proy_input.className = "inputTask";
+
+    proy_input.innerHTML = `<input type="checkbox" name="taskStatus" value=false>
+                            <input type="text" name="taskName" placeholder= "Tarea">
+                            <input type="button" id="btnAddTask_created" value="+">`;
+
+    document.getElementById('form_div_tasks').appendChild(proy_input);
+
+    let proy_Submit = document.createElement("input");
+    proy_Submit.type = "submit";
+    proy_Submit.id = "proyectSubmit";
+    document.getElementById('proyectForm').appendChild(proy_Submit);
+}
+
 function on(eventName, selector, handler) {
   document.addEventListener(eventName, function(event) {
     const elements = document.querySelectorAll(selector);
@@ -146,3 +165,4 @@ miFormulario.addEventListener('submit', sendForm);
 miFormulario.addEventListener('submit', resetForm);
 
 on('click', '#btnAddTask', addtaskClick);
+on('click', '#btnAddTask_created', addtaskClick_created);
