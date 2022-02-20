@@ -1,5 +1,41 @@
 // DECLARACIÓN DE FUNCIONES
 
+function addtaskClick() {
+    let proy_btnSubmit = document.getElementById('proyectSubmit');
+    proy_btnSubmit.remove();
+
+    let task_btnAdd = document.getElementById('btnAddTask');
+    task_btnAdd.remove();
+
+    let proy_input = document.createElement("div");
+    proy_input.className = "inputTask";
+
+    proy_input.innerHTML = `<input type="checkbox" name="taskStatus" value=false>
+                            <input type="text" name="taskName" placeholder= "Tarea">
+                            <input type="button" id="btnAddTask" value="+">`;
+
+    document.getElementById('form_div_tasks').appendChild(proy_input);
+
+    let proy_Submit = document.createElement("input");
+    proy_Submit.type = "submit";
+    proy_Submit.id = "proyectSubmit";
+    document.getElementById('proyectForm').appendChild(proy_Submit);
+}
+
+function on(eventName, selector, handler) {
+  document.addEventListener(eventName, function(event) {
+    const elements = document.querySelectorAll(selector);
+    const path = event.composedPath();
+    path.forEach(function(node) {
+      elements.forEach(function(elem) {
+        if (node === elem) {
+          handler.call(elem, event);
+        }
+      });
+    });
+  }, true);
+}
+
 function progress_status(array) {
     let tot_tasks = array.length;
     let array_filtered = array.filter((el) => el.status == true);
@@ -49,42 +85,6 @@ function resetForm() {
                                <input type="text" name="taskName" placeholder= "Tarea">
                                <input type="button" id="btnAddTask" value="+">
                            </div>`;
-}
-
-function addtaskClick() {
-    let proy_btnSubmit = document.getElementById('proyectSubmit');
-    proy_btnSubmit.remove();
-
-    let task_btnAdd = document.getElementById('btnAddTask');
-    task_btnAdd.remove();
-
-    let proy_input = document.createElement("div");
-    proy_input.className = "inputTask";
-
-    proy_input.innerHTML = `<input type="checkbox" name="taskStatus" value=false>
-                            <input type="text" name="taskName" placeholder= "Tarea">
-                            <input type="button" id="btnAddTask" value="+">`;
-
-    document.getElementById('form_div_tasks').appendChild(proy_input);
-
-    let proy_Submit = document.createElement("input");
-    proy_Submit.type = "submit";
-    proy_Submit.id = "proyectSubmit";
-    document.getElementById('proyectForm').appendChild(proy_Submit);
-}
-
-function on(eventName, selector, handler) {
-  document.addEventListener(eventName, function(event) {
-    const elements = document.querySelectorAll(selector);
-    const path = event.composedPath();
-    path.forEach(function(node) {
-      elements.forEach(function(elem) {
-        if (node === elem) {
-          handler.call(elem, event);
-        }
-      });
-    });
-  }, true);
 }
 
 function show_frontend(){
