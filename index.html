@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>DOM - Desafío Complementario</title>
+        <title>Pre entrega</title>
     </head>
     <body>
-        <h1>Desafío Complementario - DOM</h1>
-        <h2>CLASE 8 - CODERHOUSE</h2>
+        <h1>2da Pre entrga - Proyecto final</h1>
+        <h2>CLASE 11 - CODERHOUSE</h2>
         <hr>
         <p>INSPECCIONAR PARA VER SALIDAS POR CONSOLA (F12)</p>
+
+        <form id="proyectForm">
+            <input type="text" name="proyectName" id="proyectName" placeholder="Proyecto">
+            <input type="text" name="proyectBrief" id="proyectBrief" placeholder="Descripción">
+            <input type="date" name="proyectStartDate" id="proyectStartDate" placeholder="Fecha de Inicio">
+            <input type="date" name="proyectDueDate" id="proyectDueDate" placeholder="Fecha límite">
+            <div id="form_div_tasks">
+                <p>Tareas</p>
+                <div class="inputTask">
+                    <input type="checkbox" name="taskStatus" value=false>
+                    <input type="text" name="taskName" placeholder= "Tarea">
+                    <input type="button" id="btnAddTask" value="+">
+                </div>
+            </div>
+            <input type="submit" id="proyectSubmit">
+        </form>
 
         <script src="js/main.js"></script>
     </body>

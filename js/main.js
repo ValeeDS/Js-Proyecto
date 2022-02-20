@@ -1,124 +1,148 @@
-function create_proyect(name, description, start_date, due_date){
-    proyecto = new Proyect(name, description, start_date, due_date);
+// DECLARACIÓN DE FUNCIONES
 
-    let tasks = arrayTasks();
-    proyecto.tasks = tasks;
+function progress_status(array) {
+    let tot_tasks = array.length;
+    let array_filtered = array.filter((el) => el.status == true);
+    let tot_completed = array_filtered.length;
 
-    show_frontend(proyecto);
+    if (tot_tasks == 0) { progress = '-'; }
+    else { progress = tot_completed/tot_tasks; }
 
-    return proyecto;
+    return progress;
 }
 
-function create_task(task){
-    task = new Task(task);
+function sendForm(e) {
+    e.preventDefault();
+    tests = document.getElementsByClassName('inputTask');
 
-    return task;
-}
+    const inputs = miFormulario.children;
 
-function arrayTasks(){
-    const tasks = [];
-    let newTask;
+    let search = proyectos.find((el) => el.name == inputs[0].value);
+    if (search == undefined) {
+        const tasks_divs = document.getElementsByClassName('inputTask');
+        const tasks = [];
     
-    do {
-        newTask = prompt("¿Desea ingresar una nueva tarea? Ingrese Y o N?");
-        if (newTask != null && newTask == "N") {
-            break;
+        for (task of tasks_divs){
+            input_task = task.children;
+            tasks.push(new Task(input_task[1].value,input_task[0].value));
         }
-        else if (newTask != "Y"){
-            alert("Por favor ingrese Y o N");
-        }
-        else {
-            let task = prompt("Ingrese la tarea");
+    
+        proyectos.push(new Proyect(inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, tasks));
 
-            tasks.push(newTask = create_task(task));
-        }
+        show_frontend();
     }
-    while(true);
-
-    return tasks;
+    else {
+        alert("El proyecto ya existe");
+    }
 }
 
-function Add_proyects(){
-    const proyects = [];
-    let newProy;
-
-    do {
-        newproy = prompt("¿Desea ingresar un nuevo proyecto? Ingrese Y o N?");
-        if (newproy != null && newproy == "N") {
-            break;
-        }
-        else if (newproy != "Y"){
-            alert("Por favor ingrese Y o N");
-        }
-        else {
-            let name = prompt("Ingrese el nombre del Proyecto");
-            let description = prompt("Ingrese una breve descripción del proyecto");
-            let start_date = [
-                parseInt(prompt("Ingrese el año de la fecha de inicio")),
-                parseInt(prompt("Ingrese el mes de la fecha de inicio (número)")),
-                parseInt(prompt("Ingrese el día de la fecha de inicio")),
-                ];
-            let due_date = [
-                parseInt(prompt("Ingrese el año de la fecha límite")),
-                parseInt(prompt("Ingrese el mes de la fecha límite (número)")),
-                parseInt(prompt("Ingrese el día de la fecha límite")),
-                ];
-
-            proyects.push(newProy = create_proyect(name, description, start_date, due_date));
-        }
-    }
-
-    while(true);
-
-    return proyects;
+function resetForm() {
+    let div_tasks = document.getElementById('form_div_tasks');
+    div_tasks.innerHTML = `<p>Tareas</p>
+                           <div class="inputTask">
+                               <input type="checkbox" name="taskStatus" value=false>
+                               <input type="text" name="taskName" placeholder= "Tarea">
+                               <input type="button" id="btnAddTask" value="+">
+                           </div>`;
 }
 
-function show_frontend(proyecto){
+function addtaskClick() {
+    let proy_btnSubmit = document.getElementById('proyectSubmit');
+    proy_btnSubmit.remove();
+
+    let task_btnAdd = document.getElementById('btnAddTask');
+    task_btnAdd.remove();
+
+    let proy_input = document.createElement("div");
+    proy_input.className = "inputTask";
+
+    proy_input.innerHTML = `<input type="checkbox" name="taskStatus" value=false>
+                            <input type="text" name="taskName" placeholder= "Tarea">
+                            <input type="button" id="btnAddTask" value="+">`;
+
+    document.getElementById('form_div_tasks').appendChild(proy_input);
+
+    let proy_Submit = document.createElement("input");
+    proy_Submit.type = "submit";
+    proy_Submit.id = "proyectSubmit";
+    document.getElementById('proyectForm').appendChild(proy_Submit);
+}
+
+function on(eventName, selector, handler) {
+  document.addEventListener(eventName, function(event) {
+    const elements = document.querySelectorAll(selector);
+    const path = event.composedPath();
+    path.forEach(function(node) {
+      elements.forEach(function(elem) {
+        if (node === elem) {
+          handler.call(elem, event);
+        }
+      });
+    });
+  }, true);
+}
+
+function show_frontend(){
+    const proyecto = proyectos[proyectos.length - 1]
+
     let proy_div = document.createElement("div");
-    proy_div.id = `${proyecto.name}`;
-    proy_div.class = "proyect";
+    proy_div.id = (proyecto.name);
+    proy_div.className = "proyect";
 
     proy_div.innerHTML = `<h3>Proyecto: ${proyecto.name}</h3>
                          <p>${proyecto.description}</p>
-                         <p>Desde ${proyecto.start_date} hasta ${proyecto.due_date}</p>
+                         <p>Desde el ${proyecto.start_date.toLocaleDateString([],{month: 'short', day: 'numeric', year: 'numeric'})} hasta ${proyecto.due_date.toLocaleDateString([],{month: 'short', day: 'numeric', year: 'numeric'})}</p>
                          <ul id="${proyecto.name}_tasks">Tareas:</ul>`;
 
     document.body.appendChild(proy_div);
 
     tasks_ul = document.getElementById(`${proyecto.name}_tasks`);
 
-    for (const task of proyecto.tasks){
+    if (proyecto.tasks == []) {
         let li = document.createElement("li");
-        li.innerHTML = task.task;
+        li.innerHTML = `Ninguna tarea agregada
+                        <input type="button" class="btnAddTask_created" value="Añadir tarea">`;
+        tasks_ul.appendChild(li);
+    }
+    else {
+        for (const task of proyecto.tasks){
+            let li = document.createElement("li");
+            li.innerHTML = `${task.task}`;
+            tasks_ul.appendChild(li);
+        }
+        let li = document.createElement("li");
+        li.innerHTML = `<input type="button" id="btnAddTask_created" value="Añadir tarea">`
         tasks_ul.appendChild(li);
     }
 }
 
-function filtrar_completado(array,stat){
-    let result = [];
-
-    result = array.filter((elem) => elem.status == stat);
-
-    return result
-}
-
+// DECLARACIÓN DE CLASES
 class Task {
     constructor(task, status) {
         this.task = task;
-        this.status = false;
+        this.status = Boolean(status);
     }
 }
 
 class Proyect {
-    constructor(name, description, start_date, due_date, tasks, status){
+    constructor(name, description, start_date, due_date, tasks, status, progress){
         this.name = name;
         this.description = description;
-        this.start_date = new Date(start_date[0],start_date[1]-1,start_date[2]);
-        this.due_date = new Date(due_date[0],due_date[1]-1,due_date[2]);
+        this.start_date = new Date(start_date.split('-')[0],start_date.split('-')[1]-1,start_date.split('-')[2]);
+        this.due_date = new Date(due_date.split('-')[0],due_date.split('-')[1]-1,due_date.split('-')[2]); //new Date(due_date[0],due_date[1]-1,due_date[2]);
         this.tasks = tasks; // Type Array
-        this.status = false;
+        this.progress = progress_status(this.tasks);
+        if (this.progress == 1) { this.status = true; }
+        else { this.status = Boolean(status); }
     }
 }
 
-const proyectos = Add_proyects();
-console.log(proyectos);
+// EJECUCIÓN
+let proyectos = [];
+
+let miFormulario = document.getElementById('proyectForm');
+
+miFormulario.addEventListener('submit', sendForm);
+miFormulario.addEventListener('submit', resetForm);
+
+on('click', '#btnAddTask', addtaskClick);
