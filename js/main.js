@@ -24,7 +24,12 @@ function sendForm(e) {
     
         for (task of tasks_divs){
             input_task = task.children;
-            tasks.push(new Task(input_task[1].value,input_task[0].value));
+            if ((input_task[1].value == "") || (input_task[1].value == null)) {
+                continue;
+            }
+            else {
+                tasks.push(new Task(input_task[1].value,input_task[0].value));
+            }
         }
     
         proyectos.push(new Proyect(inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, tasks));
@@ -110,8 +115,6 @@ function show_frontend(){
             li.innerHTML = `${task.task}`;
             tasks_ul.appendChild(li);
         }
-        let li = document.createElement("li");
-        tasks_ul.appendChild(li);
     }
 }
 
