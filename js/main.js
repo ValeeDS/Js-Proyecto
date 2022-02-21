@@ -1,27 +1,5 @@
 // DECLARACIÓN DE FUNCIONES
 
-function addtaskClick() {
-    let proy_btnSubmit = document.getElementById('proyectSubmit');
-    proy_btnSubmit.remove();
-
-    let task_btnAdd = document.getElementById('btnAddTask');
-    task_btnAdd.remove();
-
-    let proy_input = document.createElement("div");
-    proy_input.className = "inputTask";
-
-    proy_input.innerHTML = `<input type="checkbox" name="taskStatus" value=false>
-                            <input type="text" name="taskName" placeholder= "Tarea">
-                            <input type="button" id="btnAddTask" value="+">`;
-
-    document.getElementById('form_div_tasks').appendChild(proy_input);
-
-    let proy_Submit = document.createElement("input");
-    proy_Submit.type = "submit";
-    proy_Submit.id = "proyectSubmit";
-    document.getElementById('proyectForm').appendChild(proy_Submit);
-}
-
 function on(eventName, selector, handler) {
   document.addEventListener(eventName, function(event) {
     const elements = document.querySelectorAll(selector);
@@ -34,6 +12,30 @@ function on(eventName, selector, handler) {
       });
     });
   }, true);
+}
+
+function addtaskClick() {
+    //Eliminar botones
+    let proy_btnSubmit = document.getElementById('proyectSubmit');
+    proy_btnSubmit.remove();
+    const task_btnAdd = document.getElementById('btnAddTask');
+    task_btnAdd.remove();
+
+    //Crear el div
+    const proy_input = document.createElement("div");
+    proy_input.className = "inputTask";
+
+    proy_input.innerHTML = `<input type="checkbox" name="taskStatus" value=false>
+                            <input type="text" name="taskName" placeholder= "Tarea">
+                            <input type="button" id="btnAddTask" value="+">`;
+
+    document.getElementById('form_div_tasks').appendChild(proy_input);
+
+    //Crear nuevamente el submit
+    let proy_Submit = document.createElement("input");
+    proy_Submit.type = "submit";
+    proy_Submit.id = "proyectSubmit";
+    document.getElementById('proyectForm').appendChild(proy_Submit);
 }
 
 function progress_status(array) {
@@ -49,12 +51,13 @@ function progress_status(array) {
 
 function sendForm(e) {
     e.preventDefault();
-    tests = document.getElementsByClassName('inputTask');
 
+    //Array de inputs
     const inputs = miFormulario.children;
 
+
     let search = proyectos.find((el) => el.name == inputs[0].value);
-    if (search == undefined) {
+    if ((search == undefined) || (inputs[0].value != null) && (inputs[0].value != "")) {
         const tasks_divs = document.getElementsByClassName('inputTask');
         const tasks = [];
     
@@ -64,16 +67,23 @@ function sendForm(e) {
                 continue;
             }
             else {
+                console.log(input_task[0].value);
                 tasks.push(new Task(input_task[1].value,input_task[0].value));
             }
         }
-    
-        proyectos.push(new Proyect(inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, tasks));
+        
+        const Proy = new Proyect(inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, tasks);
+        const enJSON = JSON.stringify(Proy);
 
-        show_frontend();
+        proyectos.push(Proy);
+        proy_localStorage.push(enJSON);
+
+        localStorage.setItem('proyectos', proy_localStorage);
+
+        show_frontend(proyectos);
     }
     else {
-        alert("El proyecto ya existe");
+        console.log("No ingresó un nombre para el proyecto o ya existe");
     }
 }
 
@@ -87,17 +97,18 @@ function resetForm() {
                            </div>`;
 }
 
-function show_frontend(){
-    const proyecto = proyectos[proyectos.length - 1]
+function show_frontend(array){
+    const proyecto = array[array.length - 1]
 
     let proy_div = document.createElement("div");
     proy_div.id = (proyecto.name);
     proy_div.className = "proyect";
 
-    proy_div.innerHTML = `<h3>Proyecto: ${proyecto.name}</h3>
-                         <p>${proyecto.description}</p>
-                         <p>Desde el ${proyecto.start_date.toLocaleDateString([],{month: 'short', day: 'numeric', year: 'numeric'})} hasta ${proyecto.due_date.toLocaleDateString([],{month: 'short', day: 'numeric', year: 'numeric'})}</p>
-                         <ul id="${proyecto.name}_tasks">Tareas:</ul>`;
+    proy_div.innerHTML = `<h3 id="${proyecto.name}_title">Proyecto: ${proyecto.name}</h3>
+                          <input type="button" class="btnDelete" id="btnDelete_${proyecto.name}" value="Borrar proyecto">
+                          <p id="${proyecto.name}_description">${proyecto.description}</p>
+                          <p id="${proyecto.name}_dates">Desde el ${proyecto.start_date.toLocaleDateString([],{month: 'short', day: 'numeric', year: 'numeric'})} hasta ${proyecto.due_date.toLocaleDateString([],{month: 'short', day: 'numeric', year: 'numeric'})}</p>
+                          <ul id="${proyecto.name}_tasks">Tareas:</ul>`;
 
     document.body.appendChild(proy_div);
 
@@ -110,19 +121,93 @@ function show_frontend(){
         tasks_ul.appendChild(li);
     }
     else {
-        for (const task of proyecto.tasks){
+        for (i = 0; i < proyecto.tasks.length; i++) {
+            task = proyecto.tasks[i];
             let li = document.createElement("li");
-            li.innerHTML = `${task.task}`;
+            li.id = proyecto.name+'_task'+i;
+            li.innerHTML = `<input type="checkbox" class="taskStatus" id="taskStatus_${proyecto.name}_task${i}" name="taskStatus_${proyecto.name}task'+${i}" value=${task.status}>
+                            ${task.task}`;
             tasks_ul.appendChild(li);
         }
     }
 }
 
+function reload(text) {
+    newArray = [];
+
+    if ((text != "") && (text != null)) {
+        arr = text.split('},{"name"');
+
+        for (let el = 0; el < arr.length; el++){
+            switch (arr.length) {
+                default:
+                    switch (el) {
+                        case 0:
+                            arr[el] = arr[el]+'}';
+                            break;
+                        case arr.length-1:
+                            arr[el] = '{"name"'+arr[el];
+                            break;
+                        default:
+                            arr[el] = '{"name"'+arr[el]+'}';
+                            break; 
+                    }
+                case 1:
+                    continue;
+                case 2:
+                    switch (el) {
+                        case 0:
+                            arr[el] = arr[el]+'}';
+                            break;
+                        case 1:
+                            arr[el] = '{"name"'+arr[el];
+                            break;
+                    }
+            }
+        }
+
+        for (el of arr){
+            newEl = JSON.parse(el);
+            if (newEl.start_date != null) {newEl.start_date = newEl.start_date.slice(0,10)} else {newEl.start_date = ""};
+            if (newEl.due_date != null) {newEl.due_date = newEl.due_date.slice(0,10)} else {newEl.due_date = ""};
+            if (newEl.tasks != []) {
+                newTask = []
+                for (el of newEl.tasks){
+                    el = newTask.push(new Task(el.task,el.status));
+                }
+            }
+            newArray.push(new Proyect(newEl.name,newEl.description,newEl.start_date,newEl.due_date,newTask));
+        }
+
+        for (el of newArray) {
+            el = [el];
+            show_frontend(el);
+        }     
+    }
+    
+    return newArray;
+}
+
+function delete_proy(){
+    const name_id = this.id.slice(10,this.id.length);
+    console.log(proyectos);
+    let search = proyectos.find((el) => el.name == name_id);
+    proy_new = proyectos.filter((el) => el != search);
+    proy_localStorage_new = [];
+    for (el of proy_new) {
+        proy_localStorage_new.push(JSON.stringify(el))
+    }
+    localStorage.setItem('proyectos', proy_localStorage_new);
+    location.reload();
+}
+
+
 // DECLARACIÓN DE CLASES
 class Task {
     constructor(task, status) {
         this.task = task;
-        this.status = Boolean(status);
+        if (this.status == true) { this.status = true; }
+        else { this.status = Boolean(status); }
     }
 }
 
@@ -140,7 +225,11 @@ class Proyect {
 }
 
 // EJECUCIÓN
-let proyectos = [];
+const proyectos = reload(localStorage.getItem('proyectos'));
+const proy_localStorage = [];
+for (proy of proyectos){
+    proy_localStorage.push(JSON.stringify(proy));
+}
 
 let miFormulario = document.getElementById('proyectForm');
 
@@ -148,3 +237,4 @@ miFormulario.addEventListener('submit', sendForm);
 miFormulario.addEventListener('submit', resetForm);
 
 on('click', '#btnAddTask', addtaskClick);
+on('click', '.btnDelete', delete_proy);
