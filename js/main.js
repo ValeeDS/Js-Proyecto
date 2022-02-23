@@ -45,8 +45,7 @@ function progress_status(array) {
     const tot_completed = array_filtered.length;
 
     //Evalúo si existen tareas y realizo la operación
-    if (tot_tasks == 0) { progress = '-'; }
-    else { progress = tot_completed/tot_tasks; }
+    tot_tasks == 0 ?  progress = '-' : progress = tot_completed/tot_tasks
 
     //Devuelvo resultado
     return progress;
@@ -184,8 +183,8 @@ function reload(text) {
         //Transformo los proyectos desde JSON y los guardo como Objeto Proyecto
         for (el of arr){
             newEl = JSON.parse(el);
-            if (newEl.start_date != null) {newEl.start_date = newEl.start_date.slice(0,10)} else {newEl.start_date = ""};
-            if (newEl.due_date != null) {newEl.due_date = newEl.due_date.slice(0,10)} else {newEl.due_date = ""};
+            newEl.start_date != null ? newEl.start_date = newEl.start_date.slice(0,10) : newEl.start_date = ""
+            newEl.due_date != null ? newEl.due_date = newEl.due_date.slice(0,10) : newEl.due_date = ""
             if (newEl.tasks != []) {
                 newTasks = []
                 for (el of newEl.tasks){
@@ -227,8 +226,7 @@ function delete_proy(){
 class Task {
     constructor(task, status) {
         this.task = task;
-        if (this.status == true) { this.status = true; }
-        else { this.status = Boolean(status); }
+        this.status == true ? this.status = true : this.status = Boolean(status);
     }
 }
 
@@ -240,8 +238,7 @@ class Proyect {
         this.due_date = new Date(due_date.split('-')[0],due_date.split('-')[1]-1,due_date.split('-')[2]); //new Date(due_date[0],due_date[1]-1,due_date[2]);
         this.tasks = tasks; // Type Array
         this.progress = progress_status(this.tasks);
-        if (this.progress == 1) { this.status = true; }
-        else { this.status = Boolean(status); }
+        this.progress == 1 ? this.status = true : this.status = Boolean(status);
     }
 }
 
