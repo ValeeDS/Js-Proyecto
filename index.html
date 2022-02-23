@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Pre entrega</title>
+        <meta charset="utf-8">
     </head>
     <body>
         <h1>2da Pre entrga - Proyecto final</h1>
@@ -10,19 +11,19 @@
         <p>INSPECCIONAR PARA VER SALIDAS POR CONSOLA (F12)</p>
 
         <form id="proyectForm">
-            <input type="text" name="proyectName" id="proyectName" placeholder="Proyecto">
-            <input type="text" name="proyectBrief" id="proyectBrief" placeholder="Descripción">
-            <input type="date" name="proyectStartDate" id="proyectStartDate" placeholder="Fecha de Inicio">
-            <input type="date" name="proyectDueDate" id="proyectDueDate" placeholder="Fecha límite">
+            <input id="proyectName" type="text" name="proyectName" placeholder="Proyecto">
+            <input id="proyectBrief" type="text" name="proyectBrief" placeholder="Descripción">
+            <input id="proyectStartDate" type="date" name="proyectStartDate" placeholder="Fecha de Inicio">
+            <input id="proyectDueDate" type="date" name="proyectDueDate" placeholder="Fecha límite">
             <div id="form_div_tasks">
                 <p>Tareas</p>
                 <div class="inputTask">
                     <input type="checkbox" name="taskStatus" value=false>
                     <input type="text" name="taskName" placeholder= "Tarea">
-                    <input type="button" id="btnAddTask" value="+">
+                    <input id="btnAddTask" type="button" value="+">
                 </div>
             </div>
-            <input type="submit" id="proyectSubmit">
+            <input id="proyectSubmit" type="submit">
         </form>
 
         <hr>
