@@ -60,7 +60,9 @@ function sendForm(e) {
     //Busco si ya existe el nombre del proyecto
     const search = proyectos.find((el) => el.name == inputs[0].value);
 
-    if ((search == undefined) && ((inputs[0].value != null) && (inputs[0].value != ""))) {
+    const validName = (search && [false, "El nombre del proyecto ya existe"]) || (inputs[0].value && [true, "Proyecto ingresado"] || [false, "No ingresó nombre"]);
+
+    if (validName[0]) {
         //Obtengo los divs que tienen el input de la tarea e inicializo el array de tareas
         const tasks_divs = document.getElementsByClassName('inputTask');
         const tasks = [];
@@ -86,10 +88,7 @@ function sendForm(e) {
         //Muestro por frontend
         show_frontend(proyectos);
     }
-    else {
-        //Alerta que ya existe el proyecto
-        console.log("No ingresó un nombre para el proyecto o ya existe");
-    }
+    else { console.log(validName[1])}; //Alerta que ya existe el proyecto 
 }
 
 function resetForm() {
@@ -144,28 +143,24 @@ function show_frontend(array){
 function reload(text) {
     //Creo el array para reiniciar proyectos al recargar
     const newArray = [];
+    const newArray_JSON = [];
 
     //Evalúo si el texto ingresado es válido
     if ((text != "") && (text != null)) {
         //Creo array para guardar los proyectos de la sesión anterior en JSON
         arr = text.split('},{"name"'); /* El "name" lo uso para diferenciar entre el objeto Task y el obj Proyecto*/
 
-        //Recorro el array para darle el formato correcto de JSON a los proyectos
-        for (let el = 0; el < arr.length; el++){
-            //Diferencio los casos según la cantidad de proyectos
-            switch (arr.length) {
-                case 1:
-                    continue;
-                case 2:
-                    switch (el) {
-                        case 0:
-                            arr[el] = arr[el]+'}';
-                            break;
-                        case 1:
-                            arr[el] = '{"name"'+arr[el];
-                            break;
-                    }
-                default:
+        //Diferencio los casos según la cantidad de proyectos
+        switch (arr.length) {
+            case 1:
+                break;
+            case 2:
+                arr[0] += '}';
+                arr[1] = '{"name"' + arr[1];
+                break;
+            default:
+                //Recorro el array para darle el formato correcto de JSON a los proyectos
+                for (let el = 0; el < arr.length; el++){
                     switch (el) {
                         case 0:
                             arr[el] = arr[el]+'}';
@@ -177,11 +172,12 @@ function reload(text) {
                             arr[el] = '{"name"'+arr[el]+'}';
                             break; 
                     }
-            }
+                }
         }
 
         //Transformo los proyectos desde JSON y los guardo como Objeto Proyecto
         for (el of arr){
+            newArray_JSON.push(el);
             newEl = JSON.parse(el);
             newEl.start_date != null ? newEl.start_date = newEl.start_date.slice(0,10) : newEl.start_date = ""
             newEl.due_date != null ? newEl.due_date = newEl.due_date.slice(0,10) : newEl.due_date = ""
@@ -194,14 +190,17 @@ function reload(text) {
             newArray.push(new Proyect(newEl.name,newEl.description,newEl.start_date,newEl.due_date,newTasks));
         }
 
+        localStorage.setItem('proyectos',newArray_JSON);
+
         //Muestro los proyectos de la sesión anterior
         for (el of newArray) {
             el = [el];
             show_frontend(el);
         }     
     }
-    
-    return newArray;
+
+    console.log([newArray, newArray_JSON]);
+    return [newArray, newArray_JSON];
 }
 
 function delete_proy(){
@@ -220,7 +219,6 @@ function delete_proy(){
     localStorage.setItem('proyectos', proy_localStorage_new);
     location.reload();
 }
-
 
 // DECLARACIÓN DE CLASES
 class Task {
@@ -243,8 +241,9 @@ class Proyect {
 }
 
 // EJECUCIÓN
-const proyectos = reload(localStorage.getItem('proyectos'));
-const proy_localStorage = [];
+const reload_arr = reload(localStorage.getItem('proyectos'));
+const proyectos = reload_arr[0] || [];
+const proy_localStorage = reload_arr[1] || [];
 
 let miFormulario = document.getElementById('proyectForm');
 
