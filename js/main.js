@@ -85,10 +85,12 @@ function sendForm(e) {
         proy_localStorage.push(enJSON);
         localStorage.setItem('proyectos', proy_localStorage);
 
+        Show_sweetAlert('project_added', validName[1])
+
         //Muestro por frontend
         show_frontend(proyectos);
     }
-    else { console.log(validName[1])}; //Alerta que ya existe el proyecto 
+    else { Show_sweetAlert('error_submiting_project', validName[1])}; //Alerta que ya existe el proyecto 
 }
 
 function resetForm() {
@@ -101,7 +103,7 @@ function resetForm() {
 
 function show_frontend(array){
     //Obtengo el último elemento del array
-    const proyecto = array[array.length - 1]
+    const proyecto = array[array.length - 1];
 
     //Creo el div del proyecto y lo agrego al body
     const proy_div = document.createElement("div");
@@ -114,7 +116,7 @@ function show_frontend(array){
                           <p id="${proyecto.name}_dates">Desde el ${proyecto.start_date.toLocaleDateString([],{month: 'short', day: 'numeric', year: 'numeric'})} hasta ${proyecto.due_date.toLocaleDateString([],{month: 'short', day: 'numeric', year: 'numeric'})}</p>
                           <ul id="${proyecto.name}_tasks">Tareas:</ul>`;
 
-    document.body.appendChild(proy_div);
+    document.getElementById("bodyArea").appendChild(proy_div);
 
     //Creo el listado de tareas
     tasks_ul = document.getElementById(`${proyecto.name}_tasks`);
@@ -218,6 +220,32 @@ function delete_proy(){
     }
     localStorage.setItem('proyectos', proy_localStorage_new);
     location.reload();
+}
+
+function Show_sweetAlert(type_alert , text) {
+    switch (type_alert){
+        case 'error_submiting_project':
+        Swal.fire({
+            title: '¡Error!',
+            text: text,
+            icon: 'error',
+            cancelButtonText: ' Ok ',
+            showCancelButton: true,
+            showConfirmButton: false,
+        });
+        break;
+        case 'project_added':
+        Swal.fire({
+            toast: true,
+            position: 'bottom-start',
+            title: text,
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+        });
+        break;
+    }
 }
 
 // DECLARACIÓN DE CLASES
