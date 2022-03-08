@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,200;0,400;0,700;1,400;1,700&display=swap");
 body {
   padding: 20px;
@@ -62,6 +63,9 @@ body {
         background: transparent;
         border-radius: 50%;
         box-shadow: 1em -1em 0 0 #25273c; }
+    .nav__items--disable a {
+      color: #393a4c;
+      cursor: default; }
 
 .body {
   background: #25273c;
@@ -128,3 +132,16 @@ body {
       font-weight: 700; }
   .userArea__mode {
     font-size: 1rem; }
+
+.quote__text {
+  font-size: 0.75rem;
+  font-style: oblique;
+  text-align: center;
+  margin-bottom: 0;
+  padding-bottom: 0; }
+
+.quote__author {
+  font-size: 0.65rem;
+  text-align: right; }
+  .quote__author::before {
+    content: '— '; }
